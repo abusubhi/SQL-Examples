@@ -1,0 +1,265 @@
+	--  CREATE  DATABASE sales;
+
+	--DROP DATABASE sample1;
+
+	--  CREATE  Table name;
+
+	--DROP Table products;
+
+	--DROP DATABASE sample1;
+	USE sales
+
+
+	/*simpl function*/
+	CREATE FUNCTION descount(@Price DECIMAL(16,3))
+	RETURNS DECIMAL(16,3)
+	AS 
+	BEGIN
+	RETURN @price +(@price *10/100)
+	END
+
+
+	
+	ALTER FUNCTION descount(@Price DECIMAL(15,3))
+	RETURNS DECIMAL(15,3)
+	AS 
+	BEGIN
+	RETURN @price +(@price *2/100)
+	END
+
+
+	
+	SELECT *, dbo.descount(price) AS 'well' FROM products
+
+
+
+
+
+	
+
+	CREATE PROCEDURE seltable
+	AS 
+	BEGIN
+SELECT * FROM products ORDER BY customer_name;
+	END;
+
+	EXECUTE seltable
+
+
+
+
+
+	/*create table useing procedure */
+	CREATE PROCEDURE creatTable
+	AS 
+	BEGIN
+	CREATE TABLE test (
+	product_ID int NOT NULL,
+	product_name varchar (255) ,
+	customer_name varchar (255) ,
+	price int NOT NULL ,
+	PRIMARY KEY (product_ID) 
+	);
+	END;
+
+	EXECUTE creatTable
+
+
+
+	ALTER  FUNCTION GetAvgID(@DeptID int)  
+RETURNS float   --returns float type value
+    AS 
+    BEGIN
+        
+        DECLARE @avgSal float = 0; --declares float variable 
+    
+        -- retrieves average salary and assign it to a variable 
+        SELECT @avgSal =  AVG(price) FROM products 
+        WHERE product_ID = @DeptID   
+    
+        RETURN @avgSal; --returns a value
+    END
+
+	SELECT *, dbo.GetAvgID(product_ID) AS 'id' FROM products
+
+	/*
+	CREATE TABLE products (
+	product_ID int NOT NULL,
+	product_name varchar (255) ,
+	customer_name varchar (255) ,
+	price int NOT NULL ,
+	PRIMARY KEY (product_ID) 
+	);
+		INSERT INTO products (product_ID, product_name, customer_name, price)
+		VALUES (3,'crame', 'sara', 19);
+
+		
+		SELECT * FROM products
+
+		SELECT MIN(price)
+     FROM products
+	 WHERE  product_ID <= 3
+
+
+	 
+		SELECT MAX(price)
+     FROM products
+	 WHERE  product_ID >= 3
+
+
+
+	 SELECT COUNT(product_ID) AS countt
+     FROM products 
+
+	  SELECT AVG(price) AS AVERAGE
+     FROM products 
+
+
+	 SELECT product_ID, product_name, customer_name, price * 1.1 AS NEW_PRICE
+FROM products
+
+
+SELECT * 
+FROM products 
+WHERE customer_name LIKE  '%k%' OR
+	  customer_name LIKE '%a%'	
+
+
+	  SELECT *
+FROM products
+WHERE product_ID IN (1, 8, 3)
+
+
+
+
+  SELECT top 2 *
+	  FROM products
+	  ORDER BY price DESC
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+	/*update*/
+	--Alter database [sample1] modify Name = sample ;
+	--Alter Table user add phonenumber ;
+	
+	/*INSERT INTO usersc (ID,name,email)
+		VALUES (3,ahmed,ahmed@gmail);
+		*/
+
+			USE myDB
+
+			SELECT * FROM Customers
+			-- HAVING GROUP اختيار صف معين مع شرط و طريقة الترتيب --
+SELECT COUNT(CustomerID), City
+FROM Customers
+GROUP BY City
+HAVING COUNT(CustomerID) >= 2
+ORDER BY COUNT(CustomerID) DESC;
+
+		--statement lists if the employees "Davolio" or "Fuller" have registered more than 25 orders:--
+/*SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM Orders
+INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) > 25;*/
+
+
+--stored procedure:زي فنكشن بتعملها و بتستدعيها لاحقاا--
+/*
+CREATE PROCEDURE SelectAllCustomers
+AS
+SELECT * FROM Customers
+GO;*/
+/*
+--طريقة الاستدعاء بدل كتابة الكود من جديد--
+EXEC SelectAllCustomers;*/
+
+
+
+
+USE KxP_store
+SELECT name, unit_price, unit_price * 1.1 AS NEW_PRICE
+FROM products
+
+
+SELECT * 
+FROM orders 
+WHERE order_date <= '2018-01-01'
+
+
+
+SELECT * 
+FROM order_items
+WHERE order_id = 6 AND unit_price * quantity > 30
+
+
+
+SELECT *
+FROM products
+WHERE quantity_in_stock IN (49, 38, 72)
+
+
+
+SELECT *
+FROM customers 
+WHERE birth_date BETWEEN '1990-01-01' AND '2000-01-01'
+
+
+SELECT * 
+FROM customers 
+WHERE address LIKE  '%trail%' OR
+	  address LIKE '%avenue%'	
+
+
+
+	  SELECT * 
+	  FROM orders 
+	  WHERE shipped_date IS NULL
+
+	  SELECT * 
+	  FROM customers
+	  ORDER BY state DESC,first_name DESC
+
+	   SELECT * 
+	  FROM customers
+	  ORDER BY  customer_id
+	  OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
+
+	  --	show top 3 customers have more points--
+	  SELECT *
+	  FROM customers
+	  ORDER BY points DESC
+	  OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
+
+
+	  --inner join to show tow tables --
+	  select *
+	  FROM orders
+	  INNER JOIN customers ON 
+	  orders.customer_id = customers.customer_id
+
+	  -- o & c aliase: nick name--
+	   select *
+	  FROM orders o 
+	  INNER JOIN customers  c
+	  ON 
+	  o.customer_id = c.customer_id
+
+
+
+	  --اذا تكرر العمود المطلوب في الجدولين يجب تخصيصه من اي جدول--
+
+	  SELECT order_id, order_items.product_id, quantity, order_items.unit_price
+	  FROM order_items 
+	  JOIN products ON order_items.product_id = products.product_id

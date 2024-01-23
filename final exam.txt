@@ -1,0 +1,99 @@
+
+CREATE PROCEDURE select_exam_questions (
+    @student_id INT,
+    @course_id INT,
+	@exam_id INT
+)
+AS
+BEGIN
+    -- Select exam details.
+    SELECT 
+        Exam_id , Time_did , title , studentName , Cource_name
+    FROM Exam 
+    INNER JOIN Students ON Students.student_id = Exam.student_id
+    inner JOIN Cources ON Exam.Cource_id = Cources.Cource_id AND Cources.Cource_id = @course_id
+
+	--second query--
+	SELECT  QuestionText , CorrectAnswer , Answers AS student_answer
+FROM Questions
+JOIN Exam_Questions ON Exam_Questions.Q_Sudent_Answer = Questions.Exam_Questions_id 
+AND Exam_id = @exam_id
+
+    -- Select questions and answers.
+    SELECT 
+        Questions.QuestionText,
+        Questions.CorrectAnswer,
+        Exam_Questions.Answers AS student_answer,
+        CASE
+            WHEN Questions.CorrectAnswer = Exam_Questions.Answers THEN 'Passed'
+            ELSE 'Failed'
+        END AS ranking
+    FROM Questions
+    JOIN Exam_Questions ON Exam_Questions.Q_Sudent_Answer = Questions.Exam_Questions_id 
+    AND Exam_id =  @exam_id
+END;
+
+/*student_id and cource_id and exam_id*/
+EXEC select_exam_questions 2, 23,2;
+
+EXEC select_exam_questions 1, 22,1;
+
+
+
+
+Select * from Cources
+Select * from Exam
+Select * from Exam_Questions
+Select * from Questions
+Select * from Students
+
+--first query we can use unique values for student_id and cource_id for no doublecation--
+SELECT  Exam_id , Time_did , title , studentName , Cource_name
+FROM Exam 
+INNER JOIN Students ON Students.student_id = Exam.student_id
+inner JOIN Cources ON Exam.Cource_id = Cources.Cource_id AND Cources.Cource_id = 23
+
+
+--Second query --
+SELECT  QuestionText , CorrectAnswer , Answers AS student_answer
+FROM Questions
+JOIN Exam_Questions ON Exam_Questions.Q_Sudent_Answer = Questions.Exam_Questions_id 
+AND Exam_id = 2
+
+--Select the correct answer and false anser to the one student in one exam--
+SELECT 
+    Questions.QuestionText,
+    Questions.CorrectAnswer,
+    Exam_Questions.Answers AS student_answer,
+    CASE
+        WHEN Questions.CorrectAnswer = Exam_Questions.Answers THEN 'Passed'
+        ELSE 'Failed'
+    END AS ranking
+FROM Questions
+JOIN Exam_Questions ON Exam_Questions.Q_Sudent_Answer = Questions.Exam_Questions_id 
+AND Exam_id = 2
+
+
+  CREATE FUNCTION total_correct_answers (@Exam_id INT)
+RETURNS INT
+AS
+BEGIN
+RETURN (
+SELECT COUNT(Answers) AS total_correct
+FROM exam_questions
+JOIN questions
+ON exam_questions.QuestionID = Questions.QuestionID
+
+WHERE exam_questions.Exam_id = @Exam_id AND exam_questions.answers = questions.CorrectAnswer
+);
+END;
+
+ 
+
+
+
+SELECT dbo.total_correct_answers(2);
+
+
+
+

@@ -1,0 +1,184 @@
+CREATE DATABASE EXAM;
+USE EXAM;
+
+
+CREATE TABLE Quizzes (
+  QuizID INT NOT NULL ,
+  Title VARCHAR(255) NOT NULL,
+  Questions INT NOT NULL,
+  PRIMARY KEY (QuizID)
+);
+
+
+CREATE TABLE Students (
+  student_id INT NOT NULL ,
+  studentName VARCHAR(255) NOT NULL,
+  student_pass VARCHAR(255) NOT NULL,
+  student_email VARCHAR(255) NOT NULL,
+  PRIMARY KEY (student_id)
+);
+
+CREATE TABLE Questions (
+  QuestionID INT NOT NULL,
+  QuizID INT NOT NULL,
+  QuestionText VARCHAR(255) NOT NULL,
+  AnswerChoice1 VARCHAR(255) NOT NULL,
+  AnswerChoice2 VARCHAR(255) NOT NULL,
+  AnswerChoice3 VARCHAR(255) NOT NULL,
+  AnswerChoice4 VARCHAR(255) NOT NULL,
+  CorrectAnswer VARCHAR(255) NOT NULL,
+  PRIMARY KEY (QuestionID),
+  FOREIGN KEY (QuizID) REFERENCES Quizzes (QuizID)
+);
+
+CREATE TABLE Answers (
+  AnswerID INT NOT NULL,
+  QuizID INT NOT NULL,
+  student_id INT NOT NULL,
+  QuestionID INT NOT NULL,
+  StudentID VARCHAR(255) NOT NULL,
+  Answer VARCHAR(255) NOT NULL,
+  PRIMARY KEY (AnswerID),
+  FOREIGN KEY (QuizID) REFERENCES Quizzes (QuizID),
+  FOREIGN KEY (QuestionID) REFERENCES Questions (QuestionID),
+  FOREIGN KEY (student_id) REFERENCES Students (student_id)
+);
+
+
+SELECT * FROM  Students
+
+INSERT INTo Students (student_id, studentName, student_pass, student_email)
+VALUES 
+(1, 'mohammed', '123123', 'moh@example.com'),
+(2, 'ahmed', 'ahhq', 'ahmed@example.com'),
+(3, 'ibraheem', 'csucnl', 'ibr@example.com'),
+(4, 'saad', 'clmss', 'saad@example.com'),
+(5, 'john', 'hdsbdcajk', 'john@example.com')
+
+
+SELECT * FROM  Quizzes
+
+INSERT INTO Quizzes (QuizID, Title, Questions)
+VALUES 
+(1, 'History', 4),
+(2, 'world', 3),
+(3, 'test', 2)
+
+
+SELECT * FROM  Questions
+
+INSERT INTO Questions (QuestionID,	QuizID,	QuestionText,	AnswerChoice1,	AnswerChoice2,	AnswerChoice3,	AnswerChoice4,	CorrectAnswer)
+VALUES 
+(10, 1, 'What is the favoret subject ?', 'history', 'math', 'cience','physics', 'math'),
+(20, 2, 'What is the nwe subject ?', 'history', 'math', 'cience','physics', 'history'),
+(30, 3, 'What is the biggist subject ?', 'history', 'math', 'cience','physics', 'physics'),
+(40, 4, '6x - 3 ?', '2', '2-', '0.5','-0.5', '2')
+
+
+SELECT * FROM  Answers
+
+INSERT INTO Answers (AnswerID,	QuizID,	student_id,	QuestionID,	StudentID,	Answer)
+VALUES
+(101, 1, 4, 30, 4, 'physics'),
+(102, 1, 4, 20, 4, 'cience'),
+(103, 1, 4, 10, 4, 'math'),
+(104, 4, 5, 50, 5, '-2')
+
+
+
+SELECT * FROM  Answers
+SELECT * FROM  Questions
+SELECT * FROM  Exam
+SELECT * FROM  Students
+
+--MY QUERY HERE--
+
+
+Select * FROM Answers
+WHERE QuizID = 1
+
+Select * FROM Students
+WHERE student_id = 5
+
+Select * FROM Questions
+WHERE QuestionID = 30
+
+
+Select * FROM Exam
+WHERE QuizID = 3
+
+SELECT AnswerID, Answer
+FROM Answers
+
+
+SELECT *
+FROM Answers
+WHERE student_id = 5
+--JOIN Students S ON S.student_id = 5
+
+
+
+
+
+
+--test--
+CREATE TABLE Exam (
+  Exam_id INT NOT NULL ,
+  student_id INT NOT NULL,
+  QuizID INT NOT NULL,
+  CorrectAnswer VarChar NULL,
+  section_Exam varchar(255) NOT NULL,
+  Collections nvarchar (50) null,
+  Exam_time nvarchar(50) ,
+  QuestionID nvarchar(50) ,
+	  PRIMARY KEY (Exam_id),
+	  FOREIGN KEY (QuizID) REFERENCES Quizzes (QuizID),
+	  FOREIGN KEY (student_id) REFERENCES Students (student_id),
+	  );
+
+
+
+
+
+--test--
+SELECT DISTINCT AnswerID, student_id, Answers.Answer
+FROM Answers
+JOIN Questions ON Answers.QuestionID = Questions.QuestionID
+WHERE Answers.student_id = 5
+
+
+SELECT DISTINCT AnswerID, Answers.student_id, Answers.Answer, Questions.QuestionID, Exam.Exam_time
+FROM Answers, Exam, Students, Questions
+WHERE Answers.Answer = Questions.CorrectAnswer AND Answers.student_id = Students.student_id;
+
+
+--right--
+SELECT DISTINCT AnswerID, student_id, Answers.Answer, Questions.QuestionID
+FROM Answers
+JOIN Questions ON Answers.QuestionID = Questions.QuestionID
+WHERE Answers.Answer = Questions.CorrectAnswer;
+
+
+SELECT DISTINCT AnswerID, student_id, Answers.Answer, Questions.QuestionID
+FROM Answers
+JOIN Questions ON Answers.QuestionID = Questions.QuestionID
+WHERE Answers.Answer = Questions.CorrectAnswer;
+
+
+
+
+SELECT DISTINCT AnswerID, student_id, Answers.Answer, Questions.QuestionID
+FROM Answers, 
+JOIN Questions ON Answers.QuestionID = Questions.QuestionID
+WHERE Answers.Answer = Questions.CorrectAnswer;
+
+
+SELECT * , count(Answer) FROM Answers
+GROUP BY AnswerID
+
+
+SELECT
+	COUNT(Answer) AS total_e
+FROM
+  Answers, Questions
+  WHERE student_id = 5 AND Questions.CorrectAnswer = Answers.Answer

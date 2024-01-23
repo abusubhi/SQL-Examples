@@ -1,0 +1,73 @@
+	/*if i want to input just one phramiter in month and static days and static hours*/
+CREATE FUNCTION Salary1
+(@pay DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    DECLARE @Salary DECIMAL(10,2)
+    SET @Salary = 9 * 30 * @pay
+    RETURN @Salary
+END
+
+SELECT dbo.Salary1(2.5)
+
+
+/*if i want to input all the data maniual*/
+CREATE FUNCTION Overtime
+(@hours INT, @days INT, @rate DECIMAL(10, 2))
+RETURNS DECIMAL(10, 2)
+AS
+BEGIN
+    DECLARE @overtimeSalary DECIMAL(10, 2)
+    SET @overtimeSalary = CAST(@hours AS DECIMAL(10, 2)) * CAST(@days AS DECIMAL(10, 2)) * @rate
+    RETURN @overtimeSalary
+END
+SELECT dbo.Overtime(30,9,2.5)
+
+/*if i want get the salary from the table **** salary in the year*/
+CREATE FUNCTION salary_year
+(@emp INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @salaryinyear INT
+    SELECT @salaryinyear = 12 * salary
+    FROM Employee
+    WHERE emp_id = @emp
+    
+    RETURN @salaryinyear
+END
+
+SELECT dbo.salary_year(2)
+
+/*overtime from emp id and hours*/
+CREATE FUNCTION Overtime_new
+(@emp INT, @hour int)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @overtime INT
+    SELECT @overtime = @hour * overtime_rate
+    FROM Employee
+    WHERE emp_id = @emp
+    
+    RETURN @overtime
+END
+
+select dbo.Overtime_new(1,5) AS rate_for_overtime
+
+
+/*here the vacatoin*/
+	CREATE FUNCTION t_vacation 
+	(@emp INT, @sum_day int)
+	RETURNs INT
+	AS
+	BEGIN
+	DECLARE @remaining_vacation int
+	SELECT @remaining_vacation = Employee.Vacation -  @sum_day
+	FROM Employee WHERE emp_id = @emp 
+	RETURN @remaining_vacation
+	END
+
+	SELECT dbo.t_vacation(2,8) AS remaining_vacation
+
